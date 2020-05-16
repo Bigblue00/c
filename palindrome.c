@@ -10,8 +10,7 @@ while(t!=0)
     rev=rev*10+rem;
     t=t/10;
 }
-    x=(n+rev)/2;
-    if(x==n && n>10)
+    if(rev==n)
     printf("%d is pal",n);
     else
     printf("%d not a pal",n);
