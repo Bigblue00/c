@@ -1,9 +1,10 @@
 #include<stdio.h>
 int main(){
-int n,a[1000],i,max,min,cmax=0,cmin=0,h[1000],l[1000];
+int n,cmax=0,cmin=0;
+long long int a[1000],i,max,min,h[1000],l[1000];
 scanf("%d",&n);
 for(i=0;i<n;i++)
-scanf("%d",&a[i]);
+scanf("%lld",&a[i]);
 for(i=0;i<n;i++)
 {
     h[i]=a[i];
@@ -37,8 +38,8 @@ for(i=0;i<=n-1;i++){
 if(h[i]<h[i+1])
 cmax++;}
 printf("%d ",cmax);
-for(i=0;i<=n-1;i++){
-if(l[i+1]<l[i])
+for(i=1;i<n;i++){
+if(l[i]<l[i-1])
 cmin++;}
 printf("%d",cmin);
 return 0;
