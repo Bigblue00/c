@@ -59,11 +59,13 @@ def orient(coords):
     return np.stack([local[:, 0], local[:, 2], local[:, 1]], axis=1)  # X, Y(depth), Z(up)
 
 
-def embed_fragment(frag):
+def embed_fragment(frag, flat=False):
     n = frag.GetNumAtoms()
     if n == 1:
         return np.zeros((1, 3))
     try:
+        if flat:
+            raise RuntimeError("flat layout requested")
         params = AllChem.ETKDGv3()
         params.randomSeed = 11
         if AllChem.EmbedMolecule(frag, params) == 0:
@@ -126,7 +128,11 @@ def build_species(smiles):
             Chem.SanitizeMol(frag, Chem.SanitizeFlags.SANITIZE_NONE)
         except Exception:
             pass
-        local = embed_fragment(frag) * COORD_SCALE
+        # Square-planar complexes such as [Cu(NH3)4]2+ are drawn flat.
+        flat = any(b.GetBondType() == Chem.BondType.DATIVE for b in frag.GetBonds()) and any(
+            a.GetSymbol() in ("Cu", "Ni", "Pt", "Pd") for a in frag.GetAtoms()
+        )
+        local = embed_fragment(frag, flat) * COORD_SCALE
         for i, row in zip(ids, local):
             coords[i] = row
         charge = sum(mol.GetAtomWithIdx(i).GetFormalCharge() for i in ids)
